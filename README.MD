@@ -19,3 +19,4 @@ If you want to sperate output to small files, after getting output.txt, please r
 https://github.com/cbdb-project/narrative-cbdb/sample-result.txt
 
 ## License
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license
