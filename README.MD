@@ -16,7 +16,7 @@ If you want to sperate output to small files, after getting output.txt, please r
 
 ## Sample result
 
-https://github.com/cbdb-project/narrative-cbdb/sample-result.txt
+https://github.com/cbdb-project/narrative-cbdb/blob/main/sample-result.txt
 
 ## License
 Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license
