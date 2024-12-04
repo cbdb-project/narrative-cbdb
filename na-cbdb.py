@@ -118,7 +118,7 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         kinships = cursor.fetchall()
         if kinships:
-            kinship_list = "; ".join(f"{kin_name}: {kin_rel}" for kin_name, kin_rel in kinships)
+            kinship_list = "; ".join(f"{ChName}'s {kin_rel} is {kin_name}" for kin_name, kin_rel in kinships)
             biography += f"Kinship relations: {kinship_list}. "
         
         # Associations
@@ -130,7 +130,7 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         associations = cursor.fetchall()
         if associations:
-            assoc_list = "; ".join(f"{assoc_name}: {assoc_desc}" for assoc_name, assoc_desc in associations)
+            assoc_list = "; ".join(f"{ChName}'s {assoc_desc} is {assoc_name}" for assoc_name, assoc_desc in associations)
             biography += f"Social associations: {assoc_list}. "
         
         # Texts
@@ -164,7 +164,8 @@ def get_personid():
 personid_list = get_personid()
 print(len(personid_list))
 
-output_list = get_person_biographies(list(personid_list))
+# skip personid = 0 (unknown person)
+output_list = get_person_biographies(list(personid_list[1:]))
 
 # save the output to a text file
 with open('output.txt', 'w', encoding='utf-8-sig') as f:

@@ -14,4 +14,8 @@ Create narrative paragraphs by using CBDB sqlite database
 
 If you want to sperate output to small files, after getting output.txt, please run split-data.py
 
+## Sample result
+
+https://github.com/cbdb-project/narrative-cbdb/sample-result.txt
+
 ## License
