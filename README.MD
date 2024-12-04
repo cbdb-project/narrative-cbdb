@@ -1,8 +1,8 @@
 # Narrative CBDB
 
-# Usage
-
 Create narrative paragraphs by using CBDB sqlite database
+
+## Usage
 
 1. Download [CBDB sqlite](https://huggingface.co/datasets/cbdb/cbdb-sqlite/blob/main/latest.7z) database
 
