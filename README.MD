@@ -1,6 +1,6 @@
 # Narrative CBDB
 
-Create narrative paragraphs by using CBDB sqlite database
+Create narrative biographies by using CBDB sqlite database
 
 ## Usage
 
