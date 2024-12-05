@@ -83,7 +83,7 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         entries = cursor.fetchall()
         if entries:
-            entry_list = "; ".join(f"Entered service in {entry_year} at the age of {entry_age} (Type: {entry_type})" for entry_year, entry_age, entry_type in entries)
+            entry_list = "; ".join(f"Entered service in {entry_year} at the age of {entry_age} (Entry Type: {entry_type})" for entry_year, entry_age, entry_type in entries)
             biography += f"Entry into service: {entry_list}. "
         
         # Postings
