@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 def get_person_biographies(person_ids):
-    conn = sqlite3.connect('cbdb.db')  # Connect to the SQLite database
+    conn = sqlite3.connect('cbdb.db')  # 連接到 SQLite 資料庫
     cursor = conn.cursor()
     
     biographies = []
@@ -10,19 +10,19 @@ def get_person_biographies(person_ids):
     for person_id in person_ids:
         counter += 1
         if counter % 5000 == 0:
-            print(f"Processed {counter}/{len(person_ids)} person IDs")
-        # Fetch the person's Chinese name (`c_name_chn`) for use in all sections
+            print(f"已處理 {counter}/{len(person_ids)} 人物 ID")
+        # 獲取人物的中文姓名 (`c_name_chn`)
         cursor.execute("""
         SELECT c_name_chn 
         FROM BIOG_MAIN
         WHERE c_personid=?
         """, (person_id,))
         person_name = cursor.fetchone()
-        person_name = person_name[0] if person_name else "Unknown Person"
+        person_name = person_name[0] if person_name else "未知人物"
         
-        biography = f"Biography for Person ID {person_id} ({person_name}): "
+        biography = f"人物 ID {person_id} ({person_name}) 的傳記: "
         
-        # Basic Info
+        # 基本資訊
         cursor.execute("""
         SELECT c_name AS EngName, c_name_chn AS ChName, c_birthyear AS YearBirth, c_deathyear AS YearDeath, 
                c_death_age AS YearsLived, c_notes AS Notes
@@ -33,11 +33,11 @@ def get_person_biographies(person_ids):
         
         if basic_info:
             EngName, ChName, YearBirth, YearDeath, YearsLived, Notes = basic_info
-            biography += f"{person_name}, this person was born in {YearBirth}, and died in {YearDeath}, living {YearsLived} years. "
+            biography += f"{person_name}， 出生於 {YearBirth} 年，逝世於 {YearDeath} 年，享年 {YearsLived} 歲。"
             if Notes:
-                biography += f"Notes: {Notes}. "
+                biography += f" 備註: {Notes}。"
         
-        # Sources
+        # 來源
         cursor.execute("""
         SELECT (SELECT c_title_chn FROM TEXT_CODES WHERE c_textid=BIOG_SOURCE_DATA.c_textid) AS Source, c_pages AS Pages
         FROM BIOG_SOURCE_DATA
@@ -45,10 +45,10 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         sources = cursor.fetchall()
         if sources:
-            source_list = ", ".join(f"{source} (Pages: {pages})" for source, pages in sources)
-            biography += f"Key sources include: {source_list}. "
+            source_list = "，".join(f"{source} (頁數: {pages})" for source, pages in sources)
+            biography += f" 主要來源包括: {source_list}。"
         
-        # Aliases with AliasType
+        # 別名與別名類型
         cursor.execute("""
         SELECT 
             (SELECT c_name_type_desc_chn FROM ALTNAME_CODES WHERE c_name_type_code=ALTNAME_DATA.c_alt_name_type_code) AS AliasType,
@@ -58,10 +58,10 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         aliases = cursor.fetchall()
         if aliases:
-            alias_list = ", ".join(f"{alias_name} (Type: {alias_type})" for alias_type, alias_name in aliases)
-            biography += f"Aliases include: {alias_list}. "
+            alias_list = "，".join(f"{alias_name} (類型: {alias_type})" for alias_type, alias_name in aliases)
+            biography += f" 別名包括: {alias_list}。"
         
-        # Addresses with AddrType
+        # 地址與類型
         cursor.execute("""
         SELECT 
             (SELECT c_addr_desc_chn FROM BIOG_ADDR_CODES WHERE c_addr_type=BIOG_ADDR_DATA.c_addr_type) AS AddrType,
@@ -71,10 +71,10 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         addresses = cursor.fetchall()
         if addresses:
-            addr_list = ", ".join(f"{addr_name} (Type: {addr_type})" for addr_type, addr_name in addresses)
-            biography += f"Associated locations: {addr_list}. "
+            addr_list = "，".join(f"{addr_name} (類型: {addr_type})" for addr_type, addr_name in addresses)
+            biography += f" 傳記地址: {addr_list}。"
         
-        # Entry Info (includes RuShiType)
+        # 入仕資訊
         cursor.execute("""
         SELECT c_year AS EntryYear, c_age AS EntryAge, 
                (SELECT c_entry_desc_chn FROM ENTRY_CODES WHERE c_entry_code = ENTRY_DATA.c_entry_code) AS RuShiType
@@ -83,10 +83,10 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         entries = cursor.fetchall()
         if entries:
-            entry_list = "; ".join(f"Entered service in {entry_year} at the age of {entry_age} (Entry Type: {entry_type})" for entry_year, entry_age, entry_type in entries)
-            biography += f"Entry into service: {entry_list}. "
+            entry_list = "；".join(f"於 {entry_year} 年， {entry_age} 歲入仕，入仕類型: {entry_type}。" for entry_year, entry_age, entry_type in entries)
+            biography += f" 入仕資訊: {entry_list}。"
         
-        # Postings
+        # 官職
         cursor.execute("""
         SELECT OFFICE_CODES.c_office_chn AS OfficeName, POSTED_TO_OFFICE_DATA.c_firstyear AS FirstYear
         FROM POSTED_TO_OFFICE_DATA
@@ -95,10 +95,10 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         postings = cursor.fetchall()
         if postings:
-            posting_list = "; ".join(f"{office_name} (First Year: {first_year})" for office_name, first_year in postings)
-            biography += f"Postings: {posting_list}. "
+            posting_list = "；".join(f"{office_name} (任職年份: {first_year})" for office_name, first_year in postings)
+            biography += f" 任職經歷: {posting_list}。"
         
-        # Social Status
+        # 社會狀態
         cursor.execute("""
         SELECT (SELECT c_status_desc_chn FROM STATUS_CODES WHERE c_status_code=STATUS_DATA.c_status_code) AS StatusName
         FROM STATUS_DATA
@@ -106,10 +106,10 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         statuses = cursor.fetchall()
         if statuses:
-            status_list = ", ".join(status[0] for status in statuses if status[0])
-            biography += f"Social status: {status_list}. "
+            status_list = "，".join(status[0] for status in statuses if status[0])
+            biography += f" 社會狀態: {status_list}。"
         
-        # Kinship
+        # 親屬關係
         cursor.execute("""
         SELECT (SELECT c_name_chn FROM BIOG_MAIN WHERE c_personid=KIN_DATA.c_kin_id) AS KinPersonName,
                (SELECT c_kinrel_chn FROM KINSHIP_CODES WHERE c_kincode=KIN_DATA.c_kin_code) AS KinRelName
@@ -118,10 +118,10 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         kinships = cursor.fetchall()
         if kinships:
-            kinship_list = "; ".join(f"{ChName}'s {kin_rel} is {kin_name}" for kin_name, kin_rel in kinships)
-            biography += f"Kinship relations: {kinship_list}. "
+            kinship_list = "；".join(f"{ChName} 的 {kin_rel} 是 {kin_name}" for kin_name, kin_rel in kinships)
+            biography += f" 親屬關係: {kinship_list}。"
         
-        # Associations
+        # 社會關係
         cursor.execute("""
         SELECT (SELECT c_name_chn FROM BIOG_MAIN WHERE c_personid=ASSOC_DATA.c_assoc_id) AS AssocPersonName,
                (SELECT c_assoc_desc_chn FROM ASSOC_CODES WHERE c_assoc_code=ASSOC_DATA.c_assoc_code) AS AssocName
@@ -130,10 +130,10 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         associations = cursor.fetchall()
         if associations:
-            assoc_list = "; ".join(f"{ChName}'s {assoc_desc} is {assoc_name}" for assoc_name, assoc_desc in associations)
-            biography += f"Social associations: {assoc_list}. "
+            assoc_list = "；".join(f"{ChName} 的 {assoc_desc} 是 {assoc_name}" for assoc_name, assoc_desc in associations)
+            biography += f" 社會關係: {assoc_list}。"
         
-        # Texts
+        # 文本
         cursor.execute("""
         SELECT TEXT_CODES.c_title_chn AS TextName, TEXT_CODES.c_text_year AS TextYear
         FROM TEXT_CODES
@@ -142,10 +142,10 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         texts = cursor.fetchall()
         if texts:
-            text_list = "; ".join(f"{text_name} ({text_year})" for text_name, text_year in texts)
-            biography += f"Writings: {text_list}. "
+            text_list = "；".join(f"{text_name} ({text_year})" for text_name, text_year in texts)
+            biography += f" 著作: {text_list}。"
         
-        biographies.append(biography.strip())  # Strip to remove trailing spaces and punctuation
+        biographies.append(biography.strip())  # 去掉多餘的空格和標點
     
     conn.close()
     return biographies
@@ -161,8 +161,12 @@ def get_personid():
     conn.close()
     output_list = [i[0] for i in output_list]
     return output_list
+
 personid_list = get_personid()
 print(len(personid_list))
+
+# sampling
+personid_list = personid_list[:1000]
 
 # skip personid = 0 (unknown person)
 output_list = get_person_biographies(list(personid_list[1:]))
@@ -171,4 +175,4 @@ output_list = get_person_biographies(list(personid_list[1:]))
 with open('output.txt', 'w', encoding='utf-8-sig') as f:
     for item in output_list:
         f.write("%s\n" % item)
-print("Done!")
+print("已完成，請查看 output.txt 檔案")
