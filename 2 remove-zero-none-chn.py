@@ -9,3 +9,5 @@ for item in replace_list:
 
 with open('output_remove_zero_none.txt', 'w', encoding='utf-8-sig') as f:
     f.write(data)
+
+print("Done!")

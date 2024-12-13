@@ -46,7 +46,7 @@ def get_person_biographies(person_ids):
         sources = cursor.fetchall()
         if sources:
             source_list = "，".join(f"{source} (頁數: {pages})" for source, pages in sources)
-            biography += f" 主要來源包括: {source_list}。"
+            biography += f" {ChName}資訊的主要來源包括: {source_list}。"
         
         # 別名與別名類型
         cursor.execute("""
@@ -59,7 +59,7 @@ def get_person_biographies(person_ids):
         aliases = cursor.fetchall()
         if aliases:
             alias_list = "，".join(f"{alias_name} (類型: {alias_type})" for alias_type, alias_name in aliases)
-            biography += f" 別名包括: {alias_list}。"
+            biography += f" {ChName}的別名包括: {alias_list}。"
         
         # 地址與類型
         cursor.execute("""
@@ -72,7 +72,7 @@ def get_person_biographies(person_ids):
         addresses = cursor.fetchall()
         if addresses:
             addr_list = "，".join(f"{addr_name} (類型: {addr_type})" for addr_type, addr_name in addresses)
-            biography += f" 傳記地址: {addr_list}。"
+            biography += f" {ChName}的傳記地址有: {addr_list}。"
         
         # 入仕資訊
         cursor.execute("""
@@ -84,7 +84,7 @@ def get_person_biographies(person_ids):
         entries = cursor.fetchall()
         if entries:
             entry_list = "；".join(f"於 {entry_year} 年， {entry_age} 歲入仕，入仕類型: {entry_type}。" for entry_year, entry_age, entry_type in entries)
-            biography += f" 入仕資訊: {entry_list}。"
+            biography += f" {ChName}的入仕資訊有: {entry_list}。"
         
         # 官職
         cursor.execute("""
@@ -96,7 +96,7 @@ def get_person_biographies(person_ids):
         postings = cursor.fetchall()
         if postings:
             posting_list = "；".join(f"{office_name} (任職年份: {first_year})" for office_name, first_year in postings)
-            biography += f" 任職經歷: {posting_list}。"
+            biography += f" {ChName}的任職經歷有: {posting_list}。"
         
         # 社會狀態
         cursor.execute("""
@@ -107,7 +107,7 @@ def get_person_biographies(person_ids):
         statuses = cursor.fetchall()
         if statuses:
             status_list = "，".join(status[0] for status in statuses if status[0])
-            biography += f" 社會狀態: {status_list}。"
+            biography += f" {ChName}的社會狀態有: {status_list}。"
         
         # 親屬關係
         cursor.execute("""
@@ -119,7 +119,7 @@ def get_person_biographies(person_ids):
         kinships = cursor.fetchall()
         if kinships:
             kinship_list = "；".join(f"{ChName} 的 {kin_rel} 是 {kin_name}" for kin_name, kin_rel in kinships)
-            biography += f" 親屬關係: {kinship_list}。"
+            biography += f" {ChName}的親屬關係有: {kinship_list}。"
         
         # 社會關係
         cursor.execute("""
@@ -130,8 +130,8 @@ def get_person_biographies(person_ids):
         """, (person_id,))
         associations = cursor.fetchall()
         if associations:
-            assoc_list = "；".join(f"{ChName} 的 {assoc_desc} 是 {assoc_name}" for assoc_name, assoc_desc in associations)
-            biography += f" 社會關係: {assoc_list}。"
+            assoc_list = "；".join(f"{ChName} 的 {assoc_desc} 關係是 {assoc_name}" for assoc_name, assoc_desc in associations)
+            biography += f" {ChName}的社會關係有: {assoc_list}。"
         
         # 文本
         cursor.execute("""
@@ -143,7 +143,7 @@ def get_person_biographies(person_ids):
         texts = cursor.fetchall()
         if texts:
             text_list = "；".join(f"{text_name} ({text_year})" for text_name, text_year in texts)
-            biography += f" 著作: {text_list}。"
+            biography += f" {ChName}的著作有: {text_list}。"
         
         biographies.append(biography.strip())  # 去掉多餘的空格和標點
     
@@ -165,8 +165,8 @@ def get_personid():
 personid_list = get_personid()
 print(len(personid_list))
 
-# sampling
-personid_list = personid_list[:1000]
+# # sampling
+# personid_list = personid_list[:1000]
 
 # skip personid = 0 (unknown person)
 output_list = get_person_biographies(list(personid_list[1:]))

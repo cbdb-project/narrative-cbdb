@@ -1,6 +1,7 @@
 import shutil, os
 
-INPUT_FILE = "output.txt"
+# INPUT_FILE = "output.txt"
+INPUT_FILE = "output_remove_zero_none.txt"
 OUTPUT_PATH = "output"
 SPLIT_ROWS = 15000
 
