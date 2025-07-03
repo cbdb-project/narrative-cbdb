@@ -10,7 +10,9 @@ Create narrative biographies by using CBDB sqlite database
 
 3. Rename the uncompressed database as cbdb.db and put it to the root of this project directory
 
-4. Run na-cbdb.py, the output.txt is the result that you want to get
+4. Run 1 na-cbdb-chn-short-sentences.py to get the text file
+
+5. Run 2 remove-zero-none-chn.py to clean the result. You will get the text like [this](https://github.com/cbdb-project/narrative-cbdb/blob/main/sample-result-chn.txt)
 
 If you want to sperate output to small files, after getting output.txt, please run split-data.py
 
