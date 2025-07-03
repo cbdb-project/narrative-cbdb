@@ -90,14 +90,16 @@ def get_person_biographies(person_ids):
         
         # 官職
         cursor.execute("""
-        SELECT OFFICE_CODES.c_office_chn AS OfficeName, POSTED_TO_OFFICE_DATA.c_firstyear AS FirstYear
+        SELECT OFFICE_CODES.c_office_chn AS OfficeName, POSTED_TO_OFFICE_DATA.c_firstyear AS FirstYear, ADDR_CODES.c_name_chn AS OfficeAddr
         FROM POSTED_TO_OFFICE_DATA
         INNER JOIN OFFICE_CODES ON POSTED_TO_OFFICE_DATA.c_office_id = OFFICE_CODES.c_office_id
+        INNER JOIN POSTED_TO_ADDR_DATA ON POSTED_TO_OFFICE_DATA.c_posting_id = POSTED_TO_ADDR_DATA.c_posting_id
+        INNER JOIN ADDR_CODES ON POSTED_TO_ADDR_DATA.c_addr_id = ADDR_CODES.c_addr_id
         WHERE POSTED_TO_OFFICE_DATA.c_personid=?
         """, (person_id,))
         postings = cursor.fetchall()
         if postings:
-            posting_list = f"。\n{person_name_with_id}的任官有:".join(f"{office_name} (任職年份: {first_year})" for office_name, first_year in postings)
+            posting_list = f"。\n{person_name_with_id}的任官有:".join(f"{office_name}, 任職年份: {first_year}, 任官地址：{office_addr}。" for office_name, first_year, office_addr in postings)
             biography += f"\n{person_name_with_id}的任官有: {posting_list}。"
         
         # 社會狀態
